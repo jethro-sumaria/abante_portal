@@ -31,100 +31,97 @@ export default async function DashboardPage() {
     }
   })
 
-  const recent = players
-    .filter((p) => p.payment_status !== 'Unpaid')
-    .slice(0, 5)
+  const completion = stats.totalExpected > 0 ? Math.round((stats.totalCollected / stats.totalExpected) * 100) : 0
 
   return (
-    <div className="animate-fade-up">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="font-display text-4xl md:text-5xl tracking-wider text-white">DASHBOARD</h1>
-          <p className="text-[var(--color-muted)] text-sm mt-1">Overview of all jersey payments</p>
-        </div>
-        <Link
-          href="/admin/dashboard/players/add"
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-black transition-opacity hover:opacity-90"
-          style={{ backgroundColor: 'var(--color-accent)' }}
-        >
-          + Add Player
-        </Link>
-      </div>
-
-      {/* Main stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-        {[
-          { label: 'Total Players', value: stats.total, color: 'var(--color-text)', icon: '👥' },
-          { label: 'Fully Paid',    value: stats.paid,    color: 'var(--color-green)', icon: '✅' },
-          { label: 'Partial',       value: stats.partial, color: 'var(--color-yellow)', icon: '⏳' },
-          { label: 'Unpaid',        value: stats.unpaid,  color: 'var(--color-red)', icon: '❌' },
-        ].map((s) => (
-          <div
-            key={s.label}
-            className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
-          >
-            <div className="text-xl mb-2">{s.icon}</div>
-            <div className="font-display text-4xl" style={{ color: s.color }}>{s.value}</div>
-            <div className="text-xs text-[var(--color-muted)] mt-1">{s.label}</div>
+    <div className="space-y-8">
+      <section className="rounded-[32px] border border-[var(--color-border)] bg-[var(--surface)] p-8 shadow-[0_25px_80px_rgba(0,0,0,0.18)]">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="label">Admin dashboard</p>
+            <h1 className="font-display text-4xl md:text-5xl tracking-tight text-white">Overview</h1>
+            <p className="mt-2 text-sm text-[var(--color-muted)] max-w-xl">
+              A clean summary of jersey payments, player counts, and collection performance.
+            </p>
           </div>
-        ))}
-      </div>
-
-      {/* Collection summary */}
-      <div
-        className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 mb-6"
-      >
-        <h2 className="font-display text-2xl tracking-wider text-white mb-4">COLLECTION SUMMARY</h2>
-        <div className="flex justify-between text-sm mb-2">
-          <span className="text-[var(--color-muted)]">Total Collected</span>
-          <span className="text-[var(--color-green)] font-semibold">₱{stats.totalCollected.toLocaleString()}</span>
-        </div>
-        <div className="h-3 rounded-full bg-[var(--color-surface-2)] overflow-hidden mb-2">
-          <div
-            className="h-full rounded-full"
-            style={{
-              width: `${stats.totalExpected > 0 ? (stats.totalCollected / stats.totalExpected) * 100 : 0}%`,
-              background: 'linear-gradient(90deg, #22c55e88, #22c55e)',
-            }}
-          />
-        </div>
-        <div className="flex justify-between text-xs text-[var(--color-muted)]">
-          <span>₱0</span>
-          <span>Target: ₱{stats.totalExpected.toLocaleString()}</span>
-        </div>
-      </div>
-
-      {/* Division breakdown */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
-        {divisionStats.map((d) => (
-          <div
-            key={d.div}
-            className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
+          <Link
+            href="/admin/dashboard/players/add"
+            className="inline-flex items-center justify-center rounded-2xl bg-[var(--color-accent)] px-5 py-3 text-sm font-semibold text-black transition hover:opacity-90"
           >
-            <h3 className="font-display text-xl tracking-wider text-[var(--color-accent)] mb-3">{d.div.toUpperCase()}</h3>
-            <p className="text-2xl font-bold text-white">{d.count} <span className="text-sm font-normal text-[var(--color-muted)]">players</span></p>
-            <p className="text-sm text-[var(--color-green)] mt-1">₱{d.collected.toLocaleString()} / ₱{d.expected.toLocaleString()}</p>
-          </div>
-        ))}
-      </div>
+            + Add Player
+          </Link>
+        </div>
 
-      {/* Quick links */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <Link
-          href="/admin/dashboard/players"
-          className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 card-hover block"
-        >
-          <p className="font-display text-2xl tracking-wider text-white">MANAGE PLAYERS</p>
-          <p className="text-sm text-[var(--color-muted)] mt-1">Edit, delete, or view all players →</p>
-        </Link>
-        <Link
-          href="/admin/dashboard/players/add"
-          className="rounded-2xl border border-[var(--color-accent)] bg-[var(--color-accent-dim)] p-5 card-hover block"
-        >
-          <p className="font-display text-2xl tracking-wider text-[var(--color-accent)]">ADD NEW PLAYER</p>
-          <p className="text-sm text-[var(--color-muted)] mt-1">Register a new player + jersey price →</p>
-        </Link>
-      </div>
+        <div className="grid gap-4 mt-8 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            { label: 'Total players', value: stats.total, color: 'var(--text)' },
+            { label: 'Fully paid', value: stats.paid, color: 'var(--color-green)' },
+            { label: 'Partial', value: stats.partial, color: 'var(--color-yellow)' },
+            { label: 'Unpaid', value: stats.unpaid, color: 'var(--color-red)' },
+          ].map((item) => (
+            <div
+              key={item.label}
+              className="rounded-[28px] border border-[var(--color-border)] bg-[var(--surface-2)] p-6"
+            >
+              <p className="text-xs uppercase tracking-[0.24em] text-[var(--color-muted)]">{item.label}</p>
+              <p className="mt-4 text-4xl font-display" style={{ color: item.color }}>
+                {item.value}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="grid gap-5 lg:grid-cols-[1.4fr_0.9fr]">
+        <div className="rounded-[32px] border border-[var(--color-border)] bg-[var(--surface)] p-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="label">Collection summary</p>
+              <h2 className="text-3xl font-semibold text-white">Current progress</h2>
+            </div>
+            <span className="rounded-full bg-[var(--color-accent-dim)] px-3 py-1 text-sm font-semibold text-black">
+              {completion}% collected
+            </span>
+          </div>
+
+          <div className="mt-8 space-y-4">
+            <div className="flex items-center justify-between text-sm text-[var(--color-muted)]">
+              <span>Total collected</span>
+              <span className="text-[var(--color-green)] font-semibold">₱{stats.totalCollected.toLocaleString()}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm text-[var(--color-muted)]">
+              <span>Target expected</span>
+              <span>₱{stats.totalExpected.toLocaleString()}</span>
+            </div>
+            <div className="h-3 overflow-hidden rounded-full bg-[var(--bg-2)]">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-[var(--color-green)] to-[var(--color-accent)] transition-all duration-700"
+                style={{ width: `${completion}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-4">
+          {divisionStats.map((division) => (
+            <div
+              key={division.div}
+              className="rounded-[28px] border border-[var(--color-border)] bg-[var(--surface-2)] p-6"
+            >
+              <p className="text-xs uppercase tracking-[0.24em] text-[var(--color-muted)]">{division.div}</p>
+              <p className="mt-3 text-2xl font-semibold text-white">{division.count} players</p>
+              <p className="mt-2 text-sm text-[var(--color-green)]">₱{division.collected.toLocaleString()} collected</p>
+              <p className="text-sm text-[var(--color-muted)]">Target ₱{division.expected.toLocaleString()}</p>
+            </div>
+          ))}
+          <Link
+            href="/admin/dashboard/players"
+            className="rounded-[28px] border border-[var(--color-accent)] bg-[var(--color-accent-dim)] px-6 py-5 text-center text-sm font-semibold text-black transition hover:opacity-90"
+          >
+            Manage players
+          </Link>
+        </div>
+      </section>
     </div>
   )
 }

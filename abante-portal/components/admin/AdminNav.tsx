@@ -15,6 +15,10 @@ export default function AdminNav() {
   const pathname = usePathname()
   const supabase = createClient()
 
+  if (pathname?.startsWith('/admin/login')) {
+    return null
+  }
+
   async function handleLogout() {
     await supabase.auth.signOut()
     router.push('/admin/login')
