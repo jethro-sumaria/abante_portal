@@ -17,6 +17,12 @@ const DIVISION_COLORS: Record<Division, string> = {
   Midget: 'from-rose-500 to-pink-600',
 }
 
+const ITEM_ICONS: Record<string, string> = {
+  Jersey: '👕',
+  Warmer: '🧣',
+  'Jersey + Warmer': '👕🧣',
+}
+
 export default function PublicPage() {
   const [players, setPlayers] = useState<PlayerSummary[]>([])
   const [activeDiv, setActiveDiv] = useState<Division>('Mosquito')
@@ -90,34 +96,23 @@ export default function PublicPage() {
                     : 'border-white/5 bg-white/5 hover:bg-white/8'
                 }`}
               >
-                <div
-                  className={`inline-flex text-xs font-semibold px-2 py-0.5 rounded-full bg-gradient-to-r ${DIVISION_COLORS[div]} mb-3`}
-                >
+                <div className={`inline-flex text-xs font-semibold px-2 py-0.5 rounded-full bg-gradient-to-r ${DIVISION_COLORS[div]} mb-3`}>
                   {div}
                 </div>
                 <p className="text-2xl font-bold">
                   {total > 0 ? Math.round((paid / total) * 100) : 0}%
                 </p>
-                <p className="text-xs text-slate-400 mt-1">
-                  {paid}/{total} fully paid
-                </p>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  ₱{collected.toLocaleString()} collected
-                </p>
+                <p className="text-xs text-slate-400 mt-1">{paid}/{total} fully paid</p>
+                <p className="text-xs text-slate-500 mt-0.5">₱{collected.toLocaleString()} collected</p>
               </button>
             )
           })}
         </div>
 
-        {/* Search + division label */}
+        {/* Search + division tabs */}
         <div className="flex items-center gap-3">
           <div className="relative flex-1">
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
             </svg>
             <input
@@ -134,9 +129,7 @@ export default function PublicPage() {
                 key={div}
                 onClick={() => setActiveDiv(div)}
                 className={`px-3 py-2 text-sm rounded-xl transition-colors ${
-                  activeDiv === div
-                    ? 'bg-white text-slate-900 font-medium'
-                    : 'text-slate-400 hover:text-white'
+                  activeDiv === div ? 'bg-white text-slate-900 font-medium' : 'text-slate-400 hover:text-white'
                 }`}
               >
                 {div}
@@ -162,12 +155,21 @@ export default function PublicPage() {
                   {player.jersey_number ?? '—'}
                 </div>
 
-                {/* Name */}
+                {/* Name + item type */}
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm truncate">{player.full_name}</p>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    {player.installment_count} payment{player.installment_count !== 1 ? 's' : ''}
-                  </p>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <span className="text-xs">
+                      {ITEM_ICONS[(player as any).item_type] ?? '👕'}
+                    </span>
+                    <span className="text-xs text-slate-400">
+                      {(player as any).item_type ?? 'Jersey'}
+                    </span>
+                    <span className="text-slate-700 text-xs">·</span>
+                    <span className="text-xs text-slate-500">
+                      {player.installment_count} payment{player.installment_count !== 1 ? 's' : ''}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Progress bar */}
@@ -200,9 +202,7 @@ export default function PublicPage() {
                 </div>
 
                 {/* Status badge */}
-                <span
-                  className={`text-xs font-medium px-2.5 py-1 rounded-full shrink-0 ${STATUS_STYLES[player.payment_status]}`}
-                >
+                <span className={`text-xs font-medium px-2.5 py-1 rounded-full shrink-0 ${STATUS_STYLES[player.payment_status]}`}>
                   {player.payment_status}
                 </span>
               </div>

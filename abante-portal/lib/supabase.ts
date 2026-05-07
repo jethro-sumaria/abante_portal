@@ -18,6 +18,7 @@ export interface PlayerSummary {
   balance: number
   payment_status: PaymentStatus
   installment_count: number
+  item_type: string
 }
 
 export interface Player {
