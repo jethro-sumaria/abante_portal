@@ -32,17 +32,19 @@ export default async function HomePage() {
       {/* ── Header ── */}
       <header style={{
         position: 'sticky', top: 0, zIndex: 50,
-        background: 'rgba(6,9,16,0.85)',
-        backdropFilter: 'blur(12px)',
+        background: 'rgba(5,10,20,0.85)',
+        backdropFilter: 'blur(16px)',
         borderBottom: '1px solid var(--border)',
       }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 20px', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{
               width: 34, height: 34, borderRadius: 10,
-              background: 'var(--gold)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 4px 12px rgba(59,130,246,0.3)',
             }}>
-              <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 18, color: '#0d0a00', lineHeight: 1 }}>L</span>
+              <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 18, color: '#fff', lineHeight: 1 }}>L</span>
             </div>
             <div>
               <p style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 16, letterSpacing: '-0.02em', color: 'var(--text)', lineHeight: 1 }}>Liga Tracker</p>
@@ -58,7 +60,7 @@ export default async function HomePage() {
               borderRadius: 'var(--radius-sm)',
               padding: '6px 14px',
               textDecoration: 'none',
-              transition: 'all 0.15s',
+              transition: 'all 0.2s',
             }}
           >
             Admin →
@@ -78,7 +80,12 @@ export default async function HomePage() {
             color: 'var(--text)',
           }}>
             Jersey<br />
-            <span style={{ color: 'var(--gold)' }}>Payments</span>
+            <span style={{
+              background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}>Payments</span>
           </h1>
           <p style={{ color: 'var(--text-2)', marginTop: 16, maxWidth: 440, fontSize: 15 }}>
             Full transparency on jersey payments across Mosquito, Kids, and Midget divisions.
@@ -93,25 +100,31 @@ export default async function HomePage() {
           marginBottom: 48,
         }}>
           {/* Collection card — wider */}
-          <div className="card" style={{ padding: '20px 24px', gridColumn: 'span 2' }}>
+          <div className="card" style={{ padding: '20px 24px', gridColumn: 'span 2', position: 'relative', overflow: 'hidden' }}>
+            {/* Subtle glow */}
+            <div style={{
+              position: 'absolute', top: 0, left: 0, right: 0, height: 2,
+              background: 'linear-gradient(90deg, transparent, #3b82f6, transparent)',
+              opacity: 0.5,
+            }} />
             <p className="label" style={{ marginBottom: 10 }}>Total collected</p>
-            <p style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 32, letterSpacing: '-0.03em', color: 'var(--green)' }}>
+            <p style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 32, letterSpacing: '-0.03em', color: 'var(--color-green)' }}>
               ₱{totalCollected.toLocaleString()}
             </p>
             <p style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 14 }}>of ₱{totalExpected.toLocaleString()} target</p>
             <div style={{ height: 6, background: 'var(--bg-3)', borderRadius: 99, overflow: 'hidden' }}>
-              <div style={{ height: '100%', width: `${collectPct}%`, background: 'var(--green)', borderRadius: 99, transition: 'width 0.7s ease' }} />
+              <div style={{ height: '100%', width: `${collectPct}%`, background: 'linear-gradient(90deg, #3b82f6, #60a5fa)', borderRadius: 99, transition: 'width 0.7s ease' }} />
             </div>
             <p style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 6 }}>{collectPct}% complete</p>
           </div>
 
           {[
-            { label: 'Total Players', value: players.length,  color: 'var(--text)',   icon: '👥' },
-            { label: 'Fully Paid',    value: paid,            color: 'var(--green)',  icon: '✓'  },
-            { label: 'Partial',       value: partial,         color: 'var(--yellow)', icon: '◑'  },
-            { label: 'Unpaid',        value: unpaid,          color: 'var(--red)',    icon: '○'  },
+            { label: 'Total Players', value: players.length,  color: 'var(--text)',            icon: '👥' },
+            { label: 'Fully Paid',    value: paid,            color: 'var(--color-green)',     icon: '✓'  },
+            { label: 'Partial',       value: partial,         color: 'var(--color-yellow)',    icon: '◑'  },
+            { label: 'Unpaid',        value: unpaid,          color: 'var(--color-red)',       icon: '○'  },
           ].map((s) => (
-            <div key={s.label} className="card" style={{ padding: '20px 24px' }}>
+            <div key={s.label} className="card card-hover" style={{ padding: '20px 24px' }}>
               <p style={{ fontSize: 20, marginBottom: 6 }}>{s.icon}</p>
               <p style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 36, letterSpacing: '-0.03em', color: s.color, lineHeight: 1 }}>
                 {s.value}

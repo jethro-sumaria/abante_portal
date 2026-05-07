@@ -9,9 +9,9 @@ interface Props {
 }
 
 const DIVISIONS: { key: Division; label: string; color: string; bg: string }[] = [
-  { key: 'Mosquito', label: 'Mosquito', color: '#f5c842', bg: 'rgba(245,200,66,0.08)' },
-  { key: 'Kids',     label: 'Kids',     color: '#4d9ef7', bg: 'rgba(77,158,247,0.08)' },
-  { key: 'Midget',   label: 'Midget',   color: '#ff5e57', bg: 'rgba(255,94,87,0.08)'  },
+  { key: 'Mosquito', label: 'Mosquito', color: '#fbbf24', bg: 'rgba(251,191,36,0.06)' },
+  { key: 'Kids',     label: 'Kids',     color: '#60a5fa', bg: 'rgba(96,165,250,0.06)' },
+  { key: 'Midget',   label: 'Midget',   color: '#f87171', bg: 'rgba(248,113,113,0.06)' },
 ]
 
 export default function DivisionTabs({ grouped }: Props) {
@@ -37,28 +37,33 @@ export default function DivisionTabs({ grouped }: Props) {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 8,
-                padding: '9px 18px',
+                padding: '10px 20px',
                 borderRadius: 'var(--radius-md)',
-                border: `1px solid ${isActive ? div.color : 'var(--border)'}`,
+                border: `1.5px solid ${isActive ? div.color : 'var(--border)'}`,
                 background: isActive ? div.bg : 'transparent',
                 color: isActive ? div.color : 'var(--text-2)',
-                fontFamily: isActive ? 'Syne, sans-serif' : 'Inter, sans-serif',
-                fontWeight: isActive ? 700 : 400,
+                fontFamily: 'var(--font-body)',
+                fontWeight: isActive ? 600 : 400,
                 fontSize: 14,
                 cursor: 'pointer',
-                transition: 'all 0.18s',
-                letterSpacing: isActive ? '-0.01em' : 0,
+                transition: 'all 0.2s ease',
+                boxShadow: isActive ? `0 0 20px ${div.color}10` : 'none',
               }}
             >
+              {/* Colored dot */}
+              <span style={{
+                width: 6, height: 6, borderRadius: '50%',
+                background: isActive ? div.color : 'var(--text-3)',
+                transition: 'background 0.2s',
+              }} />
               {div.label}
               <span style={{
                 fontSize: 11,
-                fontFamily: 'Inter, sans-serif',
                 fontWeight: 500,
-                background: isActive ? `${div.color}22` : 'var(--bg-2)',
+                background: isActive ? `${div.color}18` : 'var(--bg-2)',
                 color: isActive ? div.color : 'var(--text-3)',
                 borderRadius: 99,
-                padding: '1px 7px',
+                padding: '2px 8px',
               }}>
                 {count}
               </span>

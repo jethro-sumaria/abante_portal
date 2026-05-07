@@ -30,9 +30,9 @@ export default async function PlayerPaymentsPage({ params }: Props) {
   const paymentList: Payment[] = payments ?? []
 
   const STATUS_COLOR: Record<string, string> = {
-    Paid: '#22c55e',
-    Partial: '#f59e0b',
-    Unpaid: '#ef4444',
+    Paid: '#34d399',
+    Partial: '#fbbf24',
+    Unpaid: '#f87171',
   }
 
   const pct = summary.jersey_price > 0
@@ -49,11 +49,11 @@ export default async function PlayerPaymentsPage({ params }: Props) {
         >
           ← Back to Players
         </a>
-        <h1 className="font-display text-4xl md:text-5xl tracking-wider text-white">{summary.full_name.toUpperCase()}</h1>
-        <div className="flex items-center gap-3 mt-2">
+        <h1 className="font-display text-4xl md:text-5xl tracking-tight text-white">{summary.full_name.toUpperCase()}</h1>
+        <div className="flex items-center gap-3 mt-3">
           <span
             className="text-xs px-2.5 py-1 rounded-full font-semibold"
-            style={{ backgroundColor: `${STATUS_COLOR[summary.payment_status]}20`, color: STATUS_COLOR[summary.payment_status] }}
+            style={{ backgroundColor: `${STATUS_COLOR[summary.payment_status]}18`, color: STATUS_COLOR[summary.payment_status] }}
           >
             {summary.payment_status}
           </span>
@@ -65,9 +65,8 @@ export default async function PlayerPaymentsPage({ params }: Props) {
       </div>
 
       {/* Payment summary card */}
-      <div
-        className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 mb-6"
-      >
+      <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 mb-6 relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(59,130,246,0.3), transparent)' }} />
         <div className="grid grid-cols-3 gap-4 mb-5">
           <div>
             <p className="text-xs text-[var(--color-muted)] mb-1">Jersey Price</p>
@@ -75,11 +74,11 @@ export default async function PlayerPaymentsPage({ params }: Props) {
           </div>
           <div>
             <p className="text-xs text-[var(--color-muted)] mb-1">Total Paid</p>
-            <p className="font-display text-2xl" style={{ color: '#22c55e' }}>₱{Number(summary.total_paid).toLocaleString()}</p>
+            <p className="font-display text-2xl" style={{ color: '#34d399' }}>₱{Number(summary.total_paid).toLocaleString()}</p>
           </div>
           <div>
             <p className="text-xs text-[var(--color-muted)] mb-1">Balance</p>
-            <p className="font-display text-2xl" style={{ color: summary.balance > 0 ? '#ef4444' : '#22c55e' }}>
+            <p className="font-display text-2xl" style={{ color: summary.balance > 0 ? '#f87171' : '#34d399' }}>
               ₱{Number(summary.balance).toLocaleString()}
             </p>
           </div>
@@ -91,12 +90,12 @@ export default async function PlayerPaymentsPage({ params }: Props) {
             <span className="text-[var(--color-muted)]">Payment Progress</span>
             <span style={{ color: 'var(--color-accent)' }}>{Math.round(pct)}%</span>
           </div>
-          <div className="h-2.5 rounded-full bg-[var(--color-surface-2)] overflow-hidden">
+          <div className="h-2.5 rounded-full bg-[var(--bg-2)] overflow-hidden">
             <div
               className="h-full rounded-full transition-all duration-700"
               style={{
                 width: `${pct}%`,
-                background: 'linear-gradient(90deg, #22c55e88, #22c55e)',
+                background: 'linear-gradient(90deg, #3b82f6, #60a5fa)',
               }}
             />
           </div>
@@ -104,10 +103,9 @@ export default async function PlayerPaymentsPage({ params }: Props) {
       </div>
 
       {/* Add payment */}
-      <div
-        className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 mb-6"
-      >
-        <h2 className="font-display text-2xl tracking-wider text-white mb-5">ADD PAYMENT</h2>
+      <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 mb-6 relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(59,130,246,0.2), transparent)' }} />
+        <h2 className="font-display text-2xl tracking-tight text-white mb-5">Add Payment</h2>
         <PaymentForm
           playerId={playerId}
           nextInstallment={(paymentList.length + 1)}
@@ -116,11 +114,10 @@ export default async function PlayerPaymentsPage({ params }: Props) {
       </div>
 
       {/* Payment history */}
-      <div
-        className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6"
-      >
-        <h2 className="font-display text-2xl tracking-wider text-white mb-5">
-          PAYMENT HISTORY
+      <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(59,130,246,0.2), transparent)' }} />
+        <h2 className="font-display text-2xl tracking-tight text-white mb-5">
+          Payment History
           <span className="font-body text-sm font-normal text-[var(--color-muted)] ml-2 tracking-normal">
             {paymentList.length} installment{paymentList.length !== 1 ? 's' : ''}
           </span>
@@ -133,8 +130,8 @@ export default async function PlayerPaymentsPage({ params }: Props) {
             {paymentList.map((payment) => (
               <div
                 key={payment.id}
-                className="flex items-center gap-3 p-3 rounded-xl"
-                style={{ backgroundColor: 'var(--color-surface-2)' }}
+                className="flex items-center gap-3 p-3 rounded-xl transition-all duration-200 hover:bg-[rgba(59,130,246,0.03)]"
+                style={{ backgroundColor: 'var(--bg-2)' }}
               >
                 <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center font-display text-base flex-shrink-0"

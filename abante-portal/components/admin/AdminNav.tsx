@@ -28,16 +28,22 @@ export default function AdminNav() {
     <>
       {/* Desktop sidebar */}
       <aside
-        className="hidden md:flex flex-col w-60 min-h-screen border-r border-[var(--color-border)] p-5"
-        style={{ backgroundColor: 'var(--color-surface)' }}
+        className="hidden md:flex flex-col w-[240px] min-h-screen border-r border-[var(--color-border)] p-5"
+        style={{
+          backgroundColor: 'rgba(5,10,20,0.98)',
+          backgroundImage: 'linear-gradient(180deg, rgba(59,130,246,0.03) 0%, transparent 40%)',
+        }}
       >
         {/* Logo */}
-        <div className="flex items-center gap-3 mb-8">
+        <div className="flex items-center gap-3 mb-10">
           <div
-            className="w-9 h-9 rounded-lg flex items-center justify-center"
-            style={{ backgroundColor: 'var(--color-accent)' }}
+            className="w-9 h-9 rounded-xl flex items-center justify-center"
+            style={{
+              background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+              boxShadow: '0 4px 12px rgba(59,130,246,0.3)',
+            }}
           >
-            <span className="font-display text-lg text-black leading-none">L</span>
+            <span className="font-display text-lg text-white leading-none">L</span>
           </div>
           <div>
             <p className="font-display text-lg tracking-wide text-white leading-none">LIGA</p>
@@ -53,11 +59,12 @@ export default function AdminNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-150"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200"
                 style={{
                   backgroundColor: isActive ? 'var(--color-accent-dim)' : 'transparent',
-                  color: isActive ? 'var(--color-accent)' : 'var(--color-muted)',
+                  color: isActive ? 'var(--color-accent-bright)' : 'var(--color-muted)',
                   borderLeft: isActive ? '2px solid var(--color-accent)' : '2px solid transparent',
+                  boxShadow: isActive ? '0 0 20px rgba(59,130,246,0.05)' : 'none',
                 }}
               >
                 <span className="text-base">{item.icon}</span>
@@ -70,7 +77,7 @@ export default function AdminNav() {
         {/* Logout */}
         <button
           onClick={handleLogout}
-          className="flex items-center gap-2 text-sm text-[var(--color-muted)] hover:text-[#ef4444] transition-colors mt-4 px-3 py-2"
+          className="flex items-center gap-2 text-sm text-[var(--color-muted)] hover:text-[#f87171] transition-colors mt-4 px-3 py-2 rounded-lg hover:bg-[rgba(248,113,113,0.06)]"
         >
           <span>⎋</span> Sign Out
         </button>
@@ -86,15 +93,18 @@ export default function AdminNav() {
 
       {/* Mobile top nav */}
       <header
-        className="md:hidden flex items-center justify-between px-4 py-3 border-b border-[var(--color-border)] sticky top-0 z-50 backdrop-blur-md"
-        style={{ backgroundColor: 'rgba(17,24,39,0.9)' }}
+        className="md:hidden flex items-center justify-between px-4 py-3 border-b border-[var(--color-border)] sticky top-0 z-50 backdrop-blur-xl"
+        style={{ backgroundColor: 'rgba(5,10,20,0.92)' }}
       >
         <div className="flex items-center gap-2">
           <div
             className="w-7 h-7 rounded-lg flex items-center justify-center"
-            style={{ backgroundColor: 'var(--color-accent)' }}
+            style={{
+              background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+              boxShadow: '0 2px 8px rgba(59,130,246,0.3)',
+            }}
           >
-            <span className="font-display text-sm text-black leading-none">L</span>
+            <span className="font-display text-sm text-white leading-none">L</span>
           </div>
           <span className="font-display text-lg tracking-wider text-white">LIGA ADMIN</span>
         </div>
@@ -106,7 +116,7 @@ export default function AdminNav() {
               className="text-xs px-2 py-1 rounded-lg transition-all"
               style={{
                 backgroundColor: pathname === item.href ? 'var(--color-accent-dim)' : 'transparent',
-                color: pathname === item.href ? 'var(--color-accent)' : 'var(--color-muted)',
+                color: pathname === item.href ? 'var(--color-accent-bright)' : 'var(--color-muted)',
               }}
             >
               {item.label}
@@ -114,7 +124,7 @@ export default function AdminNav() {
           ))}
           <button
             onClick={handleLogout}
-            className="text-xs text-[var(--color-muted)] hover:text-[#ef4444] transition-colors"
+            className="text-xs text-[var(--color-muted)] hover:text-[#f87171] transition-colors"
           >
             Out
           </button>

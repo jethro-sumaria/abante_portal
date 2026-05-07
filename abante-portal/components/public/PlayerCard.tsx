@@ -22,11 +22,11 @@ export default function PlayerCard({ player, accentColor, accentBg }: Props) {
 
   return (
     <div
-      className="card card-hover card-gold"
-      style={{ padding: 0, overflow: 'hidden', cursor: 'default' }}
+      className="card card-hover"
+      style={{ padding: 0, overflow: 'hidden', cursor: 'default', position: 'relative' }}
     >
       {/* Top color bar */}
-      <div style={{ height: 3, background: accentColor, opacity: 0.7 }} />
+      <div style={{ height: 2, background: `linear-gradient(90deg, transparent, ${accentColor}, transparent)`, opacity: 0.6 }} />
 
       <div style={{ padding: '20px 22px' }}>
 
@@ -35,9 +35,9 @@ export default function PlayerCard({ player, accentColor, accentBg }: Props) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
             {/* Jersey number */}
             <div style={{
-              width: 42, height: 42, borderRadius: 10, flexShrink: 0,
+              width: 42, height: 42, borderRadius: 12, flexShrink: 0,
               background: accentBg,
-              border: `1px solid ${accentColor}33`,
+              border: `1px solid ${accentColor}25`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
               <span style={{
@@ -98,7 +98,7 @@ export default function PlayerCard({ player, accentColor, accentBg }: Props) {
             <p style={{
               fontFamily: 'Syne, sans-serif', fontWeight: 800,
               fontSize: 22, letterSpacing: '-0.02em',
-              color: player.payment_status === 'Unpaid' ? 'var(--text-3)' : 'var(--green)',
+              color: player.payment_status === 'Unpaid' ? 'var(--text-3)' : 'var(--color-green)',
             }}>
               ₱{Number(player.total_paid).toLocaleString()}
             </p>
@@ -121,7 +121,7 @@ export default function PlayerCard({ player, accentColor, accentBg }: Props) {
             padding: '10px 14px',
             borderRadius: 'var(--radius-sm)',
             background: 'var(--red-dim)',
-            border: '1px solid rgba(255,94,87,0.15)',
+            border: '1px solid rgba(248,113,113,0.15)',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           }}>
             <span style={{ fontSize: 12, color: 'var(--text-2)' }}>Remaining balance</span>

@@ -14,7 +14,7 @@ export default function AdminRootLayout({
     <div className="min-h-screen bg-[var(--bg)] text-[var(--color-text)]">
       <div className="flex min-h-screen">
         <AdminNav />
-        <main className="flex-1 p-4 md:p-6 lg:p-8 xl:p-10">
+        <main className="flex-1 p-4 md:p-6 lg:p-8 xl:p-10 overflow-x-hidden">
           {children}
         </main>
       </div>
