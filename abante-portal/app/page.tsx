@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase, PlayerSummary, Division } from '@/lib/supabase'
+import { supabase, PlayerSummary, Division, Payment } from '@/lib/supabase'
 
 const DIVISIONS: Division[] = ['Mosquito', 'Kids', 'Midget']
 
@@ -9,6 +9,12 @@ const STATUS_STYLES: Record<string, string> = {
   Paid: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
   Partial: 'bg-amber-50 text-amber-700 border border-amber-200',
   Unpaid: 'bg-red-50 text-red-700 border border-red-200',
+}
+
+const STATUS_STYLES_DARK: Record<string, string> = {
+  Paid: 'bg-emerald-500/20 text-emerald-400',
+  Partial: 'bg-amber-500/20 text-amber-400',
+  Unpaid: 'bg-red-500/20 text-red-400',
 }
 
 const DIVISION_COLORS: Record<Division, string> = {
@@ -29,6 +35,11 @@ export default function PublicPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
 
+  // Detail modal
+  const [selectedPlayer, setSelectedPlayer] = useState<PlayerSummary | null>(null)
+  const [payments, setPayments] = useState<Payment[]>([])
+  const [loadingPayments, setLoadingPayments] = useState(false)
+
   useEffect(() => {
     fetchPlayers()
   }, [])
@@ -41,6 +52,23 @@ export default function PublicPage() {
       .order('full_name')
     if (!error && data) setPlayers(data as PlayerSummary[])
     setLoading(false)
+  }
+
+  async function openDetail(player: PlayerSummary) {
+    setSelectedPlayer(player)
+    setLoadingPayments(true)
+    const { data } = await supabase
+      .from('payments')
+      .select('*')
+      .eq('player_id', player.id)
+      .order('payment_date')
+    setPayments(data as Payment[] ?? [])
+    setLoadingPayments(false)
+  }
+
+  function closeDetail() {
+    setSelectedPlayer(null)
+    setPayments([])
   }
 
   const byDivision = players.filter(
@@ -146,9 +174,10 @@ export default function PublicPage() {
         ) : (
           <div className="space-y-2">
             {byDivision.map((player) => (
-              <div
+              <button
                 key={player.id}
-                className="flex items-center gap-4 bg-white/5 hover:bg-white/8 border border-white/5 rounded-2xl px-5 py-4 transition-colors"
+                onClick={() => openDetail(player)}
+                className="w-full flex items-center gap-4 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 rounded-2xl px-5 py-4 transition-all text-left cursor-pointer"
               >
                 {/* Jersey number badge */}
                 <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-sm font-bold text-slate-300 shrink-0">
@@ -159,12 +188,8 @@ export default function PublicPage() {
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm truncate">{player.full_name}</p>
                   <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className="text-xs">
-                      {ITEM_ICONS[(player as any).item_type] ?? '👕'}
-                    </span>
-                    <span className="text-xs text-slate-400">
-                      {(player as any).item_type ?? 'Jersey'}
-                    </span>
+                    <span className="text-xs">{ITEM_ICONS[(player as any).item_type] ?? '👕'}</span>
+                    <span className="text-xs text-slate-400">{(player as any).item_type ?? 'Jersey'}</span>
                     <span className="text-slate-700 text-xs">·</span>
                     <span className="text-xs text-slate-500">
                       {player.installment_count} payment{player.installment_count !== 1 ? 's' : ''}
@@ -205,15 +230,143 @@ export default function PublicPage() {
                 <span className={`text-xs font-medium px-2.5 py-1 rounded-full shrink-0 ${STATUS_STYLES[player.payment_status]}`}>
                   {player.payment_status}
                 </span>
-              </div>
+
+                {/* Tap hint */}
+                <svg className="w-4 h-4 text-slate-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
             ))}
           </div>
         )}
 
         <footer className="text-center text-xs text-slate-600 pb-4">
-          Data updates in real time · Open to public for transparency
+          Tap any player to see payment details · Open to public for transparency
         </footer>
       </main>
+
+      {/* ── PLAYER DETAIL MODAL ── */}
+      {selectedPlayer && (
+        <div
+          className="fixed inset-0 bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4"
+          onClick={closeDetail}
+        >
+          <div
+            className="bg-slate-900 border border-white/10 rounded-t-3xl sm:rounded-2xl w-full sm:max-w-md max-h-[85vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Drag handle (mobile) */}
+            <div className="flex justify-center pt-3 pb-1 sm:hidden">
+              <div className="w-10 h-1 rounded-full bg-white/20" />
+            </div>
+
+            {/* Header */}
+            <div className="flex items-start justify-between px-6 pt-4 pb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center text-lg font-bold text-white">
+                  {selectedPlayer.jersey_number ?? '—'}
+                </div>
+                <div>
+                  <h2 className="font-semibold text-base">{selectedPlayer.full_name}</h2>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <span className="text-xs text-slate-400">{selectedPlayer.division}</span>
+                    <span className="text-slate-600 text-xs">·</span>
+                    <span className="text-xs">
+                      {ITEM_ICONS[(selectedPlayer as any).item_type] ?? '👕'}
+                    </span>
+                    <span className="text-xs text-slate-400">
+                      {(selectedPlayer as any).item_type ?? 'Jersey'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <button onClick={closeDetail} className="text-slate-500 hover:text-white transition-colors mt-1">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Summary strip */}
+            <div className="mx-6 mb-4 grid grid-cols-3 gap-2">
+              <div className="bg-white/5 rounded-xl p-3 text-center">
+                <p className="text-xs text-slate-500 mb-1">Price</p>
+                <p className="text-sm font-semibold">₱{Number(selectedPlayer.jersey_price).toLocaleString()}</p>
+              </div>
+              <div className="bg-white/5 rounded-xl p-3 text-center">
+                <p className="text-xs text-slate-500 mb-1">Paid</p>
+                <p className="text-sm font-semibold text-emerald-400">₱{Number(selectedPlayer.total_paid).toLocaleString()}</p>
+              </div>
+              <div className="bg-white/5 rounded-xl p-3 text-center">
+                <p className="text-xs text-slate-500 mb-1">Balance</p>
+                <p className={`text-sm font-semibold ${Number(selectedPlayer.balance) > 0 ? 'text-amber-400' : 'text-emerald-400'}`}>
+                  ₱{Number(selectedPlayer.balance).toLocaleString()}
+                </p>
+              </div>
+            </div>
+
+            {/* Progress bar */}
+            <div className="mx-6 mb-5">
+              <div className="flex justify-between text-xs text-slate-500 mb-1.5">
+                <span>Payment progress</span>
+                <span>
+                  {selectedPlayer.jersey_price > 0
+                    ? Math.round((Number(selectedPlayer.total_paid) / Number(selectedPlayer.jersey_price)) * 100)
+                    : 0}%
+                </span>
+              </div>
+              <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-sky-400 to-emerald-400 transition-all"
+                  style={{
+                    width: `${Math.min(100, selectedPlayer.jersey_price > 0
+                      ? (Number(selectedPlayer.total_paid) / Number(selectedPlayer.jersey_price)) * 100
+                      : 0)}%`,
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Status */}
+            <div className="mx-6 mb-5 flex items-center justify-between">
+              <span className="text-xs text-slate-400">Status</span>
+              <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${STATUS_STYLES_DARK[selectedPlayer.payment_status]}`}>
+                {selectedPlayer.payment_status}
+              </span>
+            </div>
+
+            {/* Payment history */}
+            <div className="border-t border-white/10 px-6 pt-4 pb-6">
+              <p className="text-xs text-slate-400 font-medium mb-3">
+                Payment History ({selectedPlayer.installment_count})
+              </p>
+              {loadingPayments ? (
+                <p className="text-sm text-slate-500 text-center py-4">Loading…</p>
+              ) : payments.length === 0 ? (
+                <p className="text-sm text-slate-500 text-center py-4">No payments recorded yet.</p>
+              ) : (
+                <div className="space-y-2">
+                  {payments.map((pay, i) => (
+                    <div key={pay.id} className="flex items-center justify-between bg-white/5 rounded-xl px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-xs text-slate-400 font-medium">
+                          {i + 1}
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">₱{Number(pay.amount_paid).toLocaleString()}</p>
+                          <p className="text-xs text-slate-500">{pay.payment_date}</p>
+                          {pay.notes && <p className="text-xs text-slate-500 italic">{pay.notes}</p>}
+                        </div>
+                      </div>
+                      <span className="text-xs text-slate-500">Installment #{pay.installment_number}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
