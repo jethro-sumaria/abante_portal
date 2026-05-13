@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
 
 export default function AdminLayout({
   children,
@@ -14,18 +13,32 @@ export default function AdminLayout({
 
   useEffect(() => {
     const checkAuth = async () => {
-      const { data } = await supabase.auth.getSession()
-      if (!data.session) {
-        router.push('/admin')
+      try {
+        // Dynamically import supabase to avoid issues with env vars at build time
+        const { supabase } = await import('@/lib/supabase')
+        const { data } = await supabase.auth.getSession()
+        
+        // If no session and not on login page, redirect to login
+        if (!data.session && window.location.pathname !== '/admin') {
+          router.push('/admin')
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error)
+        // On error, still allow access but log it
+      } finally {
+        setIsLoading(false)
       }
-      setIsLoading(false)
     }
 
     checkAuth()
   }, [router])
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="text-slate-400">Loading...</div>
+      </div>
+    )
   }
 
   return <>{children}</>

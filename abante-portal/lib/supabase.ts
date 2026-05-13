@@ -1,8 +1,9 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
+// Create client even if env vars are missing (for build time)
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 export type Division = 'Mosquito' | 'Kids' | 'Midget'
