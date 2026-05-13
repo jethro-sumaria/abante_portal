@@ -7,22 +7,27 @@ export function middleware(request: NextRequest) {
   const authToken = request.cookies.get('sb-session-token')?.value || 
                     request.cookies.get('sb-auth-token')?.value
 
-  // Add CORS headers
-  const response = NextResponse.next()
-  response.headers.set('Access-Control-Allow-Origin', '*')
-  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  // CORS headers
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  }
 
   // Handle preflight requests
   if (request.method === 'OPTIONS') {
     return new NextResponse(null, { 
       status: 200, 
-      headers: response.headers 
+      headers: corsHeaders
     })
   }
 
   // Allow public routes
   if (pathname === '/' || pathname.startsWith('/_')) {
+    const response = NextResponse.next()
+    Object.entries(corsHeaders).forEach(([key, value]) => {
+      response.headers.set(key, value)
+    })
     return response
   }
 
@@ -30,10 +35,12 @@ export function middleware(request: NextRequest) {
   if (pathname === '/admin') {
     if (authToken) {
       // Redirect to dashboard if already authenticated
-      const dashboardUrl = request.nextUrl.clone()
-      dashboardUrl.pathname = '/admin/dashboard'
-      return NextResponse.redirect(dashboardUrl)
+      return NextResponse.redirect(new URL('/admin/dashboard', request.url))
     }
+    const response = NextResponse.next()
+    Object.entries(corsHeaders).forEach(([key, value]) => {
+      response.headers.set(key, value)
+    })
     return response
   }
 
@@ -41,13 +48,19 @@ export function middleware(request: NextRequest) {
   if (pathname.startsWith('/admin')) {
     if (!authToken) {
       // Redirect to login if not authenticated
-      const loginUrl = request.nextUrl.clone()
-      loginUrl.pathname = '/admin'
-      return NextResponse.redirect(loginUrl)
+      return NextResponse.redirect(new URL('/admin', request.url))
     }
+    const response = NextResponse.next()
+    Object.entries(corsHeaders).forEach(([key, value]) => {
+      response.headers.set(key, value)
+    })
     return response
   }
 
+  const response = NextResponse.next()
+  Object.entries(corsHeaders).forEach(([key, value]) => {
+    response.headers.set(key, value)
+  })
   return response
 }
 
