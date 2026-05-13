@@ -13,6 +13,21 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true)
   const [activeDiv, setActiveDiv] = useState<Division>('Mosquito')
 
+  // Check auth on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { data } = await supabase.auth.getSession()
+        if (!data.session) {
+          router.push('/admin')
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error)
+      }
+    }
+    checkAuth()
+  }, [router])
+
   // Add modals
   const [showAddPlayer, setShowAddPlayer] = useState(false)
   const [showAddPayment, setShowAddPayment] = useState(false)
